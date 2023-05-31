@@ -1,4 +1,4 @@
-# # A Relation-aware Network for Defocus Blur Detection
+# A Relation-aware Network for Defocus Blur Detection
 
 ## Data structure
 
