@@ -6,11 +6,11 @@ Defocus blur detection (DBD) is an important task in computer vision that aims t
 which can enhance the accuracy of contour detection. To evaluate the superiority of the proposed method, we implement extensive experiments on two two public benchmark datasets, CUHK and DUT. The experimental results demonstrate that our method achieves state-of-the-art performance.
 
 ## Framework
-
+![Image text](https://github.com/WAbur/RAN/blob/main/framework.png)
 
 
 ## Output
-
+![Image text](https://github.com/WAbur/RAN/blob/main/output.png)
 
 
 ## Data structure
@@ -51,12 +51,8 @@ dataset
 ```
 Our method only support training which set the size of batch as 2.
 
-## Test
-
-- Run **main.py** scripts.\
-  
+## Test  
   ```
   python main.py test --data_path /data_path/ --model_path /model_path/ --bact_size 2 --save_map True
   ```
-
 'save_map' means method will save the predicted results. If you needn't the results. please set 'save_map' as 'False'.
