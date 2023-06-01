@@ -5,7 +5,6 @@ import warnings
 import torch
 import numpy as np
 from trainer import Trainer, Tester
-from inference import Inference
 
 from config import getConfig
 warnings.filterwarnings('ignore')

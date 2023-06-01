@@ -1,12 +1,13 @@
 """
 author: Min Seok Lee and Wooseok Shin
 """
+import numpy as np
 import torch.nn as nn
+from util.utils import *
 import torch.nn.functional as F
 from config import getConfig
 
 cfg = getConfig()
-
 
 class RFB_Block(nn.Module):
     def __init__(self, in_channel, out_channel):
@@ -82,7 +83,7 @@ class MS_CAM(nn.Module):
         return wei
 
 
-class SEA_Block(nn.Module):
+class RSA_Block(nn.Module):
     def __init__(self, in_channel, out_channel):
         super(SEA_Block, self).__init__()
         self.conv_x2 = nn.Conv2d(in_channel, out_channel, 3, padding=1)
@@ -110,6 +111,7 @@ class SEA_Block(nn.Module):
         
         y = x1_1.mul(1-w) + x1_2.mul(w)
         return y
+
 
 class aggregation(nn.Module):
     def __init__(self, channel):
