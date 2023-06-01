@@ -8,11 +8,6 @@ which can enhance the accuracy of contour detection. To evaluate the superiority
 ## Framework
 ![Image text](https://github.com/WAbur/RAN/blob/main/framework.png)
 
-
-## Output
-![Image text](https://github.com/WAbur/RAN/blob/main/output.png)
-
-
 ## Data structure
 
 <pre><code>
