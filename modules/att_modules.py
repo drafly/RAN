@@ -1,6 +1,3 @@
-"""
-author: Min Seok Lee and Wooseok Shin
-"""
 import numpy as np
 import torch.nn as nn
 from util.utils import *
