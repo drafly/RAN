@@ -7,11 +7,11 @@ which can enhance the accuracy of contour detection. To evaluate the superiority
 
 ## Framework
 
-![](C:\Users\xduwa\AppData\Roaming\marktext\images\2023-06-01-14-59-23-image.png)
+
 
 ## Output
 
-![](C:\Users\xduwa\AppData\Roaming\marktext\images\2023-06-01-15-00-09-image.png)
+
 
 ## Data structure
 
@@ -46,12 +46,7 @@ dataset
 * scikit-learn >= 0.23.2
 
 ## Train
-
-* Run **main.py** scripts.
-  
-  <pre><code>
   python main.py train --data_pth /data_path/ --model_path /model_path/ --batch_size 2
-
 Our method only support training which set the size of batch as 2.
 
 ## Test
