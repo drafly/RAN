@@ -4,9 +4,6 @@ def getConfig():
     parser = argparse.ArgumentParser()
     parser.add_argument('action', type=str, default='train', help='Model Training or Testing options')
     parser.add_argument('--exp_num', default=7, type=str, help='experiment_number')
-   # 2是COMB-software-TRUE的TE3 3是TE7的COMB-software-TRUE 4是TE3nature数据集 5是TE7nature数据集 6是没有边缘Nature 7是既没有边缘又没有object attention模块Nature 8是ARM数据集COMB-ARM-TRUE 9数据集为COMB-software-all-bceloss
-   # 10数据集为COMB-software-all-APILoss-del_MAE 11为COMB-software-TRUE-bceloss 12为COMB-software-all-APILoss-del_BCE-early_stop(mae) 13为COMB-software-all-APILoss-del_BCE-no-early_stop(patient=100)
-   # 14为数据集为COMB-software-all1152-APILoss-del_MAE-early_stop(mae) 15为COMB-ARM-ALL-1152-APILoss-del_MAE-early_stop(mae)
     parser.add_argument('--dataset', type=str, default='Nature', help='DUTS')
     parser.add_argument('--data_path', type=str, default='/data/dataset/wangyi/TRACER')
 
