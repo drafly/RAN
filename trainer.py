@@ -25,21 +25,18 @@ class Trainer():
         self.tr_gt_folder = os.path.join(args.data_path, args.dataset, 'Train/masks/')
         self.tr_edge_folder = os.path.join(args.data_path, args.dataset, 'Train/contour0.6/')
 
-        self.train_transform = get_train_augmentation(img_size=args.img_size, ver=args.aug_ver)
+        self.train_transform = get_train_augmentation(img_size=args.img_size)
         self.test_transform = get_test_augmentation(img_size=args.img_size)
 
         self.train_loader = get_loader(self.tr_img_folder, self.tr_gt_folder, self.tr_edge_folder, phase='train',
-                                       batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers,
+                                       batch_size=args.batch_size, shuffle=True, num_workers=4,
                                        transform=self.train_transform, seed=args.seed)
         self.val_loader = get_loader(self.tr_img_folder, self.tr_gt_folder, self.tr_edge_folder, phase='val',
-                                     batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers,
+                                     batch_size=args.batch_size, shuffle=False, num_workers=4,
                                      transform=self.test_transform, seed=args.seed)
 
         # Network
         self.model = RAN(args).to(self.device)
-
-        if args.multi_gpu:
-            self.model = nn.DataParallel(self.model).to(self.device)
 
         # Loss and Optimizer
         self.criterion = Criterion(args)
@@ -65,11 +62,7 @@ class Trainer():
             plt.ylabel('train_loss')
             path1 = os.path.join(save_path, 'train_loss.jpg')
             plt.savefig(path1)
-
-            if args.scheduler == 'Reduce':
-                self.scheduler.step(val_loss)
-            else:
-                self.scheduler.step()
+            self.scheduler.step(val_loss)
 
             # Save models
             if val_mae < min_mae:
@@ -100,7 +93,7 @@ class Trainer():
             images = torch.tensor(images, device=self.device, dtype=torch.float32)
             masks = torch.tensor(masks, device=self.device, dtype=torch.float32)
             contour = torch.tensor(contour, device=self.device, dtype=torch.float32)
-            contour = self.connectivity(contour, args.img_size)
+            contour = self.connectivity(contour, args)
 
             self.optimizer.zero_grad()
             outputs, contour_mask = self.model(images)
@@ -110,7 +103,7 @@ class Trainer():
             loss = loss_D + loss_C
 
             loss.backward()
-            nn.utils.clip_grad_norm_(self.model.parameters(), args.clipping)
+            nn.utils.clip_grad_norm_(self.model.parameters(), 2)
             self.optimizer.step()
 
             # Metric
@@ -135,7 +128,7 @@ class Trainer():
                 images = torch.tensor(images, device=self.device, dtype=torch.float32)
                 masks = torch.tensor(masks, device=self.device, dtype=torch.float32)
                 contour = torch.tensor(contour, device=self.device, dtype=torch.float32)
-                contour = self.connectivity(contour, args.img_size)
+                contour = self.connectivity(contour, args)
 
                 outputs, contour_mask = self.model(images)
                 loss_D = self.criterion(outputs, masks)
@@ -154,7 +147,7 @@ class Trainer():
         return val_loss.avg, val_mae.avg
 
 
-    def connectivity(self, gts, trainsize):
+    def connectivity(self, gts, args):
         gts = gts.cpu().detach().numpy()
         direction1 = [0,    0,      0,      0,      0,      1,      1,      1]
         direction2 = [-1,   -1,     -1,     0,      0,      0,      0,      0]
@@ -167,21 +160,23 @@ class Trainer():
 
 
         for i in range(8):
-            gt1 = np.zeros((trainsize, trainsize), dtype=float)
-            gt_origin = gts[0][0][direction1[i]:trainsize+direction2[i], direction3[i]:trainsize+direction4[i]]
-            np.copyto(gt1[direction5[i]:trainsize+direction6[i], direction7[i]:trainsize+direction8[i]], gt_origin)
-            gt1[gt1 > 0 ] = 1
-            gt1 = np.expand_dims(gt1, axis=0)
-            gt1 = np.expand_dims(gt1, axis=0)
-            gt2 = np.zeros((trainsize, trainsize), dtype=float)
-            gt_origin = gts[0][0][direction1[i]:trainsize+direction2[i], direction3[i]:trainsize+direction4[i]]
-            np.copyto(gt2[direction5[i]:trainsize+direction6[i], direction7[i]:trainsize+direction8[i]], gt_origin)
-            gt2[gt2 > 0 ] = 1
-            gt2 = np.expand_dims(gt2, axis=0)
-            gt2 = np.expand_dims(gt2, axis=0)
-            gt1 = np.append(gt1, gt2, axis=0)
+            gt1 = np.zeros((args.img_size, args.img_size), dtype=float)
+            for j in range(args.batch_size):
+                if j==0:
+                    gt_origin = gts[0][0][direction1[i]:args.img_size+direction2[i], direction3[i]:args.img_size+direction4[i]]
+                    np.copyto(gt1[direction5[i]:args.img_size+direction6[i], direction7[i]:args.img_size+direction8[i]], gt_origin)
+                    gt1[gt1 > 0 ] = 1
+                    gt1 = np.expand_dims(gt1, axis=0)
+                    gt1 = np.expand_dims(gt1, axis=0)
+                else:
+                    gt2 = np.zeros((args.img_size, args.img_size), dtype=float)
+                    gt_origin = gts[0][0][direction1[i]:args.img_size+direction2[i], direction3[i]:args.img_size+direction4[i]]
+                    np.copyto(gt2[direction5[i]:args.img_size+direction6[i], direction7[i]:args.img_size+direction8[i]], gt_origin)
+                    gt2[gt2 > 0 ] = 1
+                    gt2 = np.expand_dims(gt2, axis=0)
+                    gt2 = np.expand_dims(gt2, axis=0)
+                    gt1 = np.append(gt1, gt2, axis=0)
             gts = np.append(gts, gt1, axis=1)
-
         gts = np.delete(gts, 0, 1)
         gts = torch.tensor(gts).float()
         gts = gts.cuda()
@@ -199,8 +194,6 @@ class Tester():
 
         # Network
         self.model = self.model = RAN(args).to(self.device)
-        if args.multi_gpu:
-            self.model = nn.DataParallel(self.model).to(self.device)
 
         path = os.path.join(save_path, 'best_model.pth')
         self.model.load_state_dict(torch.load(path))
@@ -212,10 +205,10 @@ class Tester():
         te_gt_folder = os.path.join(args.data_path, args.dataset, 'Test/masks/')
         self.test_loader = get_loader(te_img_folder, te_gt_folder, edge_folder=None, phase='test',
                                       batch_size=args.batch_size, shuffle=False,
-                                      num_workers=args.num_workers, transform=self.test_transform)
+                                      num_workers=4, transform=self.test_transform)
 
         if args.save_map is not None:
-            os.makedirs(os.path.join('/data/dataset/wangyi/EfficientNet/result-exp_num67/', self.args.dataset), exist_ok=True)
+            os.makedirs(os.path.join(self.args.result_path, self.args.dataset), exist_ok=True)
 
     def test(self):
         self.model.eval()
@@ -248,7 +241,7 @@ class Tester():
                     # Save prediction map
                     if self.args.save_map is not None:
                         output = (output.squeeze().detach().cpu().numpy()*255.0).astype(np.uint8)   # convert uint8 type
-                        cv2.imwrite(os.path.join('/data/dataset/wangyi/EfficientNet/result-exp_num67/', self.args.dataset, image_name[i]+'.png'), output)
+                        cv2.imwrite(os.path.join(self.args.result_path, self.args.dataset, image_name[i]+'.png'), output)
 
                     # log
                     test_loss.update(loss.item(), n=1)

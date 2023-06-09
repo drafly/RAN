@@ -12,8 +12,6 @@ args = getConfig()
 
 
 def main(args):
-    print('<---- Training Params ---->')
-    pprint.pprint(args)
 
     # Random Seed
     seed = args.seed
@@ -27,14 +25,16 @@ def main(args):
     torch.backends.cudnn.benchmark = False
 
     if args.action == 'train':
-        save_path = os.path.join(args.model_path, args.dataset, f'TE{args.arch}_{str(args.exp_num)}')
+        print('<---- Training Params ---->')
+        pprint.pprint(args)
+        save_path = os.path.join(args.model_path, args.dataset, f'experience_{str(args.exp_num)}')
 
         # Create model directory
         os.makedirs(save_path, exist_ok=True)
         Trainer(args, save_path)
 
     elif args.action == 'test':
-        save_path = os.path.join(args.model_path, args.dataset, f'TE{args.arch}_{str(args.exp_num)}')
+        save_path = os.path.join(args.model_path, args.dataset, f'experience_{str(args.exp_num)}')
         datasets = ['DUT', 'CUHK', 'CTCUG']
 
         for dataset in datasets:
@@ -44,10 +44,7 @@ def main(args):
             print(f'Test Loss:{test_loss:.3f} | MAX_F:{test_maxf:.4f} '
                   f'| AVG_F:{test_avgf:.4f} | MAE:{test_mae:.4f} | S_Measure:{test_s_m:.4f}')
     else:
-        save_path = os.path.join(args.model_path, args.dataset, f'TE{args.arch}_{str(args.exp_num)}')
-
-        print('<----- Initializing inference mode ----->')
-        Inference(args, save_path).test()
+        print("Please choose the action 'train' or 'test'. ")
 
 
 if __name__ == '__main__':

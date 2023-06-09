@@ -96,36 +96,28 @@ def get_loader(img_folder, gt_folder, edge_folder, phase: str, batch_size, shuff
     return data_loader
 
 
-def get_train_augmentation(img_size, ver):
-    if ver == 1:
-        transforms = albu.Compose([
-            albu.Resize(img_size, img_size, always_apply=True),
-            albu.Normalize([0.485, 0.456, 0.406],
+def get_train_augmentation(img_size):
+    transforms = albu.Compose([
+        albu.OneOf([
+            albu.HorizontalFlip(),
+            albu.VerticalFlip(),
+            albu.RandomRotate90()
+        ], p=0.5),
+        albu.OneOf([
+            albu.RandomContrast(),
+            albu.RandomGamma(),
+            albu.RandomBrightness(),
+        ], p=0.5),
+        albu.OneOf([
+            albu.MotionBlur(blur_limit=5),
+            albu.MedianBlur(blur_limit=5),
+            albu.GaussianBlur(blur_limit=5),
+            albu.GaussNoise(var_limit=(5.0, 20.0)),
+        ], p=0.5),
+        albu.Resize(img_size, img_size, always_apply=True),
+        albu.Normalize([0.485, 0.456, 0.406],
                            [0.229, 0.224, 0.225]),
-            ToTensorV2(),
-        ])
-    if ver == 2:
-        transforms = albu.Compose([
-            albu.OneOf([
-                albu.HorizontalFlip(),
-                albu.VerticalFlip(),
-                albu.RandomRotate90()
-            ], p=0.5),
-            albu.OneOf([
-                albu.RandomContrast(),
-                albu.RandomGamma(),
-                albu.RandomBrightness(),
-            ], p=0.5),
-            albu.OneOf([
-                albu.MotionBlur(blur_limit=5),
-                albu.MedianBlur(blur_limit=5),
-                albu.GaussianBlur(blur_limit=5),
-                albu.GaussNoise(var_limit=(5.0, 20.0)),
-            ], p=0.5),
-            albu.Resize(img_size, img_size, always_apply=True),
-            albu.Normalize([0.485, 0.456, 0.406],
-                           [0.229, 0.224, 0.225]),
-            ToTensorV2(),
+        ToTensorV2(),
         ])
     return transforms
 
