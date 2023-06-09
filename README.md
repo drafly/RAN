@@ -9,6 +9,7 @@ which can enhance the accuracy of contour detection. To evaluate the superiority
 ![Image text](https://github.com/WAbur/RAN/blob/main/framework.png)
 
 ## Data structure
+use "contour_generator.py" to generate the contour masks
 
 <pre><code>
 dataset
