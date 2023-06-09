@@ -22,7 +22,6 @@ dataset
 │   │   ├── images
 │   │   ├── masks
 │   │   ├── contour
-│   │   ├── Test
 ├── DUT
 │   ├── Test
 │   │   ├── images
@@ -45,7 +44,6 @@ dataset
 ```
   python main.py train --data_pth /data_path/ --model_path /model_path/ --batch_size 2
 ```
-Our method only support training which set the size of batch as 2.
 
 ## Test  
   ```
