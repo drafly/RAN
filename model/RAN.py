@@ -6,16 +6,17 @@ from util.effi_utils import get_model_shape
 from modules.att_modules import RFB_Block, aggregation, RSA_Block
 
 
-class TRACER(nn.Module):
+class RAN(nn.Module):
     def __init__(self, cfg):
         super().__init__()
-        self.model = EfficientNet.from_pretrained(f'efficientnet-b{cfg.arch}', advprop=True)
+        self.model = EfficientNet.from_pretrained(f'efficientnet-b3', advprop=True)
         self.block_idx, self.channels = get_model_shape()
         self.H = cfg.img_size
         self.W = cfg.img_size
 
         # Receptive Field Blocks
-        channels = [int(arg_c) for arg_c in cfg.RFB_aggregated_channel]
+        RFB_aggregated_channel = [32, 64, 128]
+        channels = [int(arg_c) for arg_c in RFB_aggregated_channel]
         self.rfb2 = RFB_Block(self.channels[1], channels[0])
         self.rfb3 = RFB_Block(self.channels[2], channels[1])
         self.rfb4 = RFB_Block(self.channels[3], channels[2])
@@ -52,7 +53,7 @@ class TRACER(nn.Module):
         contour3 = self.con_edge4(contour3)
 
         contour3 = F.interpolate(contour3, scale_factor=2, mode='bilinear')
-        ocntour3 = self.con_edge3(contour3)
+        contour3 = self.con_edge3(contour3)
         contour2 = torch.cat((x2_rfb, contour3), 1)
         contour2 = self.con_edge3(contour2)
 

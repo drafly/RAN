@@ -1,10 +1,10 @@
+"""
+author: Min Seok Lee and Wooseok Shin
+"""
 import numpy as np
 import torch.nn as nn
 from util.utils import *
 import torch.nn.functional as F
-from config import getConfig
-
-cfg = getConfig()
 
 class RFB_Block(nn.Module):
     def __init__(self, in_channel, out_channel):
@@ -82,7 +82,7 @@ class MS_CAM(nn.Module):
 
 class RSA_Block(nn.Module):
     def __init__(self, in_channel, out_channel):
-        super(SEA_Block, self).__init__()
+        super(RSA_Block, self).__init__()
         self.conv_x2 = nn.Conv2d(in_channel, out_channel, 3, padding=1)
         self.conv = nn.Conv2d(out_channel, out_channel, 3, padding=1)
         self.conv2 = nn.Conv2d(out_channel*2, out_channel, 3, padding=1)
@@ -127,7 +127,6 @@ class aggregation(nn.Module):
                                         (channel[0] + channel[1] + channel[2]), 3, padding=1)
         self.conv_upsample6 = nn.Conv2d((channel[0] + channel[1] + channel[2]), 1, 3, padding=1)
 
-        # self.UAM = UnionAttentionModule(channel[0] + channel[1] + channel[2])
 
     def forward(self, e4, e3, e2):
         e4_1 = e4
@@ -141,7 +140,6 @@ class aggregation(nn.Module):
         e2_2 = torch.cat((e2_1, self.conv_upsample5(self.upsample(e3_2))), 1)
         x = self.conv_concat3(e2_2)
 
-        # output = self.UAM(x)
         output = self.conv_upsample6(x)
 
         return output
