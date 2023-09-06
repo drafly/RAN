@@ -54,9 +54,11 @@ Download and unzip datasets from https://github.com/shangcai1/SG [1] to "./datas
 'save_map' means method will save the predicted results. If you needn't the results. please set 'save_map' as 'False'.
 
 ## citation
+<pre><code>
 @article{Wang2023RAN,
   title={A Relation-aware Network for Defocus Blur Detection},
   author={Yi Wang, Peiliang Huang, Longfei Han and Chenchu Xu},
   journal={The 7th Asian Conference on Artificial Intelligence Technology},
   year={2023}
+</code></pre>
 }
