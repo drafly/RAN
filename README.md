@@ -60,5 +60,5 @@ Download and unzip datasets from https://github.com/shangcai1/SG [1] to "./datas
   author={Yi Wang, Peiliang Huang, Longfei Han and Chenchu Xu},
   journal={The 7th Asian Conference on Artificial Intelligence Technology},
   year={2023}
-</code></pre>
 }
+</code></pre>
