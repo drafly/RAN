@@ -32,6 +32,8 @@ dataset
 │   │   ├── masks
 </code></pre>
 
+Download and unzip datasets from https://github.com/shangcai1/SG [1] to "./dataset"
+
 ## Requirements
 
 * Python >= 3.7.x
@@ -50,3 +52,11 @@ dataset
   python main.py test --data_path /data_path/ --model_path /model_path/ --bact_size 2 --save_map True
   ```
 'save_map' means method will save the predicted results. If you needn't the results. please set 'save_map' as 'False'.
+
+## citation
+@article{Wang2023RAN,
+  title={A Relation-aware Network for Defocus Blur Detection},
+  author={Yi Wang, Peiliang Huang, Longfei Han and Chenchu Xu},
+  journal={The 7th Asian Conference on Artificial Intelligence Technology},
+  year={2023}
+}
