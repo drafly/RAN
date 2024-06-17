@@ -55,10 +55,12 @@ Download and unzip datasets from https://github.com/shangcai1/SG [1] to "./datas
 
 ## citation
 <pre><code>
-@article{Wang2023RAN,
-  title={A Relation-aware Network for Defocus Blur Detection},
-  author={Yi Wang, Peiliang Huang, Longfei Han and Chenchu Xu},
-  journal={The 7th Asian Conference on Artificial Intelligence Technology},
-  year={2023}
+@inproceedings{wang2023relation,
+  title={A Relation-Aware Network for Defocus Blur Detection},
+  author={Wang, Yi and Huang, Peiliang and Han, Longfei and Xu, Chenchu},
+  booktitle={2023 7th Asian Conference on Artificial Intelligence Technology (ACAIT)},
+  pages={66--74},
+  year={2023},
+  organization={IEEE}
 }
 </code></pre>
